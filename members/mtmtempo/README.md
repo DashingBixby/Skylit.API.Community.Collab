@@ -7,3 +7,4 @@
 
 Both documents include the October 10, 2026 risk and target revision. Historical results describe the prior policy; the revised policy has no forward results in this snapshot.
 
+Trading strategy documentation and community contributions.
