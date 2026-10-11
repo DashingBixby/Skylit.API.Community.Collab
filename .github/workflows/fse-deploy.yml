@@ -35,9 +35,16 @@ env:
   ECR_REPOSITORY: fse
 
 jobs:
+  # The engine suite in 4 parallel shards (tests/conftest.py FSE_TEST_SHARD):
+  # whole files, balanced by their CI durations. Serial it took about 26 min.
   test:
+    name: test (${{ matrix.shard }}/4)
     runs-on: ubuntu-24.04-arm
-    timeout-minutes: 60
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1, 2, 3]
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -72,12 +79,17 @@ jobs:
       # The image's Python code: the engine, the tests and the plugins it ships.
       # (`ruff check .` also lints research scripts the image does not carry.)
       - name: Lint
+        if: matrix.shard == 0
         working-directory: ${{ env.PROJECT_DIR }}
         run: ruff check src tests research/matrix research/range research/edge_study research/ts4
 
+      # worksteal: idle workers take queued tests, so a few long Hypothesis tests
+      # do not pile up on one worker.
       - name: Test
         working-directory: ${{ env.PROJECT_DIR }}
-        run: python -m pytest -q -n auto --durations=15
+        env:
+          FSE_TEST_SHARD: ${{ matrix.shard }}/4
+        run: python -m pytest -q -n auto --dist worksteal --durations=15
 
   # The fse console: API (ui/api) and SPA (ui/web), in parallel with the engine tests.
   ui-test:
