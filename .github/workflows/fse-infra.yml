@@ -107,6 +107,7 @@ jobs:
     env:
       TF_VAR_alert_email: ${{ vars.FSE_ALERT_EMAIL }}
       TF_STATE_BUCKET: ${{ vars.TF_STATE_BUCKET }}
+      TF_VAR_enable_ui: ${{ vars.FSE_ENABLE_UI || 'false' }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -137,6 +138,30 @@ jobs:
         with:
           terraform_version: ${{ env.TERRAFORM_VERSION }}
           terraform_wrapper: false
+
+      # Optional console settings: unset repository variables keep the Terraform defaults.
+      - name: Console variables
+        env:
+          OPERATOR_EMAIL: ${{ vars.FSE_OPERATOR_EMAIL }}
+          OPERATOR_INVITE_VERSION: ${{ vars.FSE_OPERATOR_INVITE_VERSION }}
+          UI_COGNITO_DELETION_PROTECTION: ${{ vars.FSE_UI_COGNITO_DELETION_PROTECTION }}
+          ORIGIN_SECRET_VERSION: ${{ vars.FSE_ORIGIN_SECRET_VERSION }}
+        run: |
+          add() {
+            if [ -z "$2" ]; then
+              return 0
+            fi
+            if [ "$(printf '%s' "$2" | wc -l)" -ne 0 ]; then
+              echo "::error::the repository variable for $1 has more than one line"
+              exit 1
+            fi
+            printf '%s=%s\n' "$1" "$2" >> "$GITHUB_ENV"
+            echo "$1 set"
+          }
+          add TF_VAR_operator_email "$OPERATOR_EMAIL"
+          add TF_VAR_operator_invite_version "$OPERATOR_INVITE_VERSION"
+          add TF_VAR_ui_cognito_deletion_protection "$UI_COGNITO_DELETION_PROTECTION"
+          add TF_VAR_origin_secret_version "$ORIGIN_SECRET_VERSION"
 
       - name: Plan
         working-directory: ${{ env.INFRA_DIR }}
@@ -175,6 +200,7 @@ jobs:
     env:
       TF_VAR_alert_email: ${{ vars.FSE_ALERT_EMAIL }}
       TF_STATE_BUCKET: ${{ vars.TF_STATE_BUCKET }}
+      TF_VAR_enable_ui: ${{ vars.FSE_ENABLE_UI || 'false' }}
       AWS_APPLY_ROLE_ARN: ${{ vars.AWS_APPLY_ROLE_ARN }}
     steps:
       - name: Check the apply role
@@ -213,6 +239,30 @@ jobs:
         with:
           terraform_version: ${{ env.TERRAFORM_VERSION }}
           terraform_wrapper: false
+
+      # Optional console settings: unset repository variables keep the Terraform defaults.
+      - name: Console variables
+        env:
+          OPERATOR_EMAIL: ${{ vars.FSE_OPERATOR_EMAIL }}
+          OPERATOR_INVITE_VERSION: ${{ vars.FSE_OPERATOR_INVITE_VERSION }}
+          UI_COGNITO_DELETION_PROTECTION: ${{ vars.FSE_UI_COGNITO_DELETION_PROTECTION }}
+          ORIGIN_SECRET_VERSION: ${{ vars.FSE_ORIGIN_SECRET_VERSION }}
+        run: |
+          add() {
+            if [ -z "$2" ]; then
+              return 0
+            fi
+            if [ "$(printf '%s' "$2" | wc -l)" -ne 0 ]; then
+              echo "::error::the repository variable for $1 has more than one line"
+              exit 1
+            fi
+            printf '%s=%s\n' "$1" "$2" >> "$GITHUB_ENV"
+            echo "$1 set"
+          }
+          add TF_VAR_operator_email "$OPERATOR_EMAIL"
+          add TF_VAR_operator_invite_version "$OPERATOR_INVITE_VERSION"
+          add TF_VAR_ui_cognito_deletion_protection "$UI_COGNITO_DELETION_PROTECTION"
+          add TF_VAR_origin_secret_version "$ORIGIN_SECRET_VERSION"
 
       # Re-plan here with the apply role, then apply exactly that plan.
       - name: Plan and apply
