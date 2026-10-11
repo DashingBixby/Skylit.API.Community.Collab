@@ -146,6 +146,9 @@ jobs:
           OPERATOR_INVITE_VERSION: ${{ vars.FSE_OPERATOR_INVITE_VERSION }}
           UI_COGNITO_DELETION_PROTECTION: ${{ vars.FSE_UI_COGNITO_DELETION_PROTECTION }}
           ORIGIN_SECRET_VERSION: ${{ vars.FSE_ORIGIN_SECRET_VERSION }}
+          # Existing VPC: FSE_EXISTING_SUBNET_IDS is an HCL list, e.g. ["subnet-0123456789abcdef0"].
+          EXISTING_VPC_ID: ${{ vars.FSE_EXISTING_VPC_ID }}
+          EXISTING_SUBNET_IDS: ${{ vars.FSE_EXISTING_SUBNET_IDS }}
         run: |
           add() {
             if [ -z "$2" ]; then
@@ -162,6 +165,8 @@ jobs:
           add TF_VAR_operator_invite_version "$OPERATOR_INVITE_VERSION"
           add TF_VAR_ui_cognito_deletion_protection "$UI_COGNITO_DELETION_PROTECTION"
           add TF_VAR_origin_secret_version "$ORIGIN_SECRET_VERSION"
+          add TF_VAR_existing_vpc_id "$EXISTING_VPC_ID"
+          add TF_VAR_existing_subnet_ids "$EXISTING_SUBNET_IDS"
 
       - name: Plan
         working-directory: ${{ env.INFRA_DIR }}
@@ -247,6 +252,9 @@ jobs:
           OPERATOR_INVITE_VERSION: ${{ vars.FSE_OPERATOR_INVITE_VERSION }}
           UI_COGNITO_DELETION_PROTECTION: ${{ vars.FSE_UI_COGNITO_DELETION_PROTECTION }}
           ORIGIN_SECRET_VERSION: ${{ vars.FSE_ORIGIN_SECRET_VERSION }}
+          # Existing VPC: FSE_EXISTING_SUBNET_IDS is an HCL list, e.g. ["subnet-0123456789abcdef0"].
+          EXISTING_VPC_ID: ${{ vars.FSE_EXISTING_VPC_ID }}
+          EXISTING_SUBNET_IDS: ${{ vars.FSE_EXISTING_SUBNET_IDS }}
         run: |
           add() {
             if [ -z "$2" ]; then
@@ -263,6 +271,8 @@ jobs:
           add TF_VAR_operator_invite_version "$OPERATOR_INVITE_VERSION"
           add TF_VAR_ui_cognito_deletion_protection "$UI_COGNITO_DELETION_PROTECTION"
           add TF_VAR_origin_secret_version "$ORIGIN_SECRET_VERSION"
+          add TF_VAR_existing_vpc_id "$EXISTING_VPC_ID"
+          add TF_VAR_existing_subnet_ids "$EXISTING_SUBNET_IDS"
 
       # Re-plan here with the apply role, then apply exactly that plan.
       - name: Plan and apply
