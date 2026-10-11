@@ -77,7 +77,7 @@ jobs:
 
       - name: Test
         working-directory: ${{ env.PROJECT_DIR }}
-        run: python -m pytest -q
+        run: python -m pytest -q -n auto --durations=15
 
   # The fse console: API (ui/api) and SPA (ui/web), in parallel with the engine tests.
   ui-test:
