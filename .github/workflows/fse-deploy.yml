@@ -60,10 +60,12 @@ jobs:
           fi
           sudo apt-get update -qq
           sudo apt-get install -y -qq git-crypt
-          umask 077
           key="$RUNNER_TEMP/gc.key"
           trap 'rm -f "$key"' EXIT
-          printf '%s' "$GIT_CRYPT_KEY" | base64 -d > "$key"
+          # umask 077 for the key file only: git-crypt unlock rewrites the checkout,
+          # and under 077 every decrypted file became 0600, unreadable by the
+          # images' uid 10001 (PermissionError on /app/src/fse/__init__.py).
+          (umask 077 && printf '%s' "$GIT_CRYPT_KEY" | base64 -d > "$key")
           git-crypt unlock "$key"
 
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
@@ -110,10 +112,12 @@ jobs:
           fi
           sudo apt-get update -qq
           sudo apt-get install -y -qq git-crypt
-          umask 077
           key="$RUNNER_TEMP/gc.key"
           trap 'rm -f "$key"' EXIT
-          printf '%s' "$GIT_CRYPT_KEY" | base64 -d > "$key"
+          # umask 077 for the key file only: git-crypt unlock rewrites the checkout,
+          # and under 077 every decrypted file became 0600, unreadable by the
+          # images' uid 10001 (PermissionError on /app/src/fse/__init__.py).
+          (umask 077 && printf '%s' "$GIT_CRYPT_KEY" | base64 -d > "$key")
           git-crypt unlock "$key"
 
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
@@ -183,10 +187,12 @@ jobs:
           fi
           sudo apt-get update -qq
           sudo apt-get install -y -qq git-crypt
-          umask 077
           key="$RUNNER_TEMP/gc.key"
           trap 'rm -f "$key"' EXIT
-          printf '%s' "$GIT_CRYPT_KEY" | base64 -d > "$key"
+          # umask 077 for the key file only: git-crypt unlock rewrites the checkout,
+          # and under 077 every decrypted file became 0600, unreadable by the
+          # images' uid 10001 (PermissionError on /app/src/fse/__init__.py).
+          (umask 077 && printf '%s' "$GIT_CRYPT_KEY" | base64 -d > "$key")
           git-crypt unlock "$key"
 
       - uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
