@@ -1,5 +1,5 @@
-# fse infra: offline checks on every change, a plan behind the production environment,
-# and an apply only when started by hand with apply = true.
+# fse infra: offline checks on every change (PRs and main), a plan behind the production
+# environment on main only, and an apply only when started by hand with apply = true.
 #
 # Needs (see the "Run on AWS" section of the fse README):
 #   secret   GIT_CRYPT_KEY            base64 of `git-crypt export-key -`
@@ -94,10 +94,9 @@ jobs:
 
   plan:
     needs: check
-    # Fork PRs get no secrets or OIDC token; skip them instead of failing.
-    if: >-
-      github.event_name != 'pull_request' ||
-      github.event.pull_request.head.repo.full_name == github.repository
+    # PRs run only the offline check job. The plan runs once, after merge to main
+    # (or by hand), so the production approval is requested once, not twice.
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-24.04-arm
     timeout-minutes: 30
     # The OIDC subject becomes environment:production, which the plan-push role trusts.
