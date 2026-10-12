@@ -372,7 +372,7 @@ jobs:
         env:
           UI_ONLY: ${{ steps.scope.outputs.ui_only }}
         run: |
-          runner_cmd='if [ -e /var/lib/fse-host/runner-held ]; then echo "fse-runner is held by the console; not restarted"; else systemctl restart fse-runner && systemctl is-active fse-runner || exit 1; fi'
+          runner_cmd='if [ -e /var/lib/fse-host/runner-held ]; then echo "fse-runner is held by the console; not restarted"; else systemctl reset-failed fse-runner; systemctl restart fse-runner && systemctl is-active fse-runner || exit 1; fi'
           ui_cmd='if systemctl is-enabled --quiet fse-ui.service 2>/dev/null; then systemctl reset-failed fse-ui.service fse-edge.service; systemctl restart fse-ui.service fse-edge.service && sleep 5 && systemctl is-active fse-ui.service fse-edge.service || exit 1; fi'
           if [ "$UI_ONLY" = true ]; then
             params=$(jq -n --arg ui "$ui_cmd" '{commands: [$ui]}')
