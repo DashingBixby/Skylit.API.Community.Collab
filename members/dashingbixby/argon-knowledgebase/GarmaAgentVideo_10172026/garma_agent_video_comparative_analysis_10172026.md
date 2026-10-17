@@ -1,6 +1,3 @@
----
-
-```markdown
 # garma_agent_video_summary_and_findings.md
 
 - **Title:** Executive Summary & Technical Findings — Garma's Agent Architecture, Obsidian Brain & IB Playbook (`2026-10-17` Session)
@@ -91,11 +88,9 @@ In his October 2026 PDF playbook (**`The Garma Playbook: A to Z`**), Garma codif
 4. **Forge & Live Broker Integration (`34:45–37:05`, `48:24–49:10`):**
    - **Forge:** Upcoming Skylit in-house sandbox and marketplace for building, backtesting, forward-testing, and selling trading agents[cite: 3].
    - **Live Broker Linking (Closed Beta):** `Webull` cash account option execution is currently in closed beta with `Falcon`; `Tastytrade` (options) and `Rithmic` / `Tradovate` (futures) are coming soon[cite: 3].
-```
 
 ---
 
-```markdown
 # kb_vs_garma_video_comparison_analysis.md
 
 - **Title:** Knowledge Base vs. Garma Video (`2026-10-17`) — Contradictions, New Specifications & Outdated Items Analysis
@@ -183,8 +178,3 @@ Because our initial browse of `skylit.ai/docs` and `skylit.ai/changelog` capture
 1. **Update Config Constants Immediately:** Set `Gatekeeper_Min_King_Pct = 0.20`, `Gatekeeper_Max_King_Pct = 0.30`, `Air_Pocket_Max_King_Pct = 0.20`, `IB_Earliest_Entry_Time_ET = "10:00:00"`, and `Strict_Min_RR = 3.0`[cite: 3].
 2. **Add `Demand_Displacement` & `Never_Short_Reverse_Rug` Interlocks:** Enforce an early exit if price creeps back to the entry node and stagnates (Rule 5), and hard-block any short signal when a positive floor sits directly beneath a negative node (Rule 9)[cite: 3].
 3. **Separate SPX and SPY Heatmap Reads:** Do not expect `SPX` and `SPY` GEX node patterns to mirror each other strike-for-strike (`C-01`), and require `>= 2 of 3` across `{SPX, SPY, QQQ}`[cite: 3].
-```
-
----
-
-Let me know if you'd like me to fold those newly revealed **92 Atlas Indicator/Drawing specs** (such as `Session Levels`, `Initial Balance`, `Timmy Trades`, and `Order Blocks`) or the **October 16, 2026 IB Trade Case Study** directly into the main Knowledge Base files!
