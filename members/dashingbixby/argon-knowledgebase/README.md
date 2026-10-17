@@ -6,7 +6,7 @@
 
 ## What it does
 
-A 22-file Markdown knowledge base of the Skylit methodology, written for human reviewers and for software agents. Every rule, threshold, time window, and procedure carries an epistemic tag: `[DOCTRINE: <source>]`, `[GENERAL TA]`, `[INFERENCE]`, or `[NOT SPECIFIED]`. Agents should treat `[NOT SPECIFIED]` parameters as configuration, not constants, and check `open_questions.md`.
+A Markdown knowledge base (22 core files plus a session folder) of the Skylit methodology, written for human reviewers and for software agents. Every rule, threshold, time window, and procedure carries an epistemic tag: `[DOCTRINE: <source>]`, `[GENERAL TA]`, `[INFERENCE]`, or `[NOT SPECIFIED]`. Agents should treat `[NOT SPECIFIED]` parameters as configuration, not constants, and check `open_questions.md`.
 
 Start with [00_index.md](00_index.md). It holds the source inventory, file map, reading order, and the tagging specification.
 
@@ -20,6 +20,7 @@ Start with [00_index.md](00_index.md). It holds the source inventory, file map, 
 | Setups | [setup_catalog_rug_and_reverse_rug.md](setup_catalog_rug_and_reverse_rug.md) · [setup_catalog_beach_ball_and_pika_cloud.md](setup_catalog_beach_ball_and_pika_cloud.md) · [setup_catalog_fade_gatekeeper_and_vex_swing.md](setup_catalog_fade_gatekeeper_and_vex_swing.md) · [case_studies.md](case_studies.md) |
 | Execution and risk | [entries_stops_targets_and_rr.md](entries_stops_targets_and_rr.md) · [risk_sizing_and_discipline.md](risk_sizing_and_discipline.md) · [no_trade_conditions.md](no_trade_conditions.md) · [session_timing.md](session_timing.md) |
 | Other products | [flowseeker_options_flow.md](flowseeker_options_flow.md) · [dark_pool.md](dark_pool.md) · [tempest_volatility.md](tempest_volatility.md) |
+| Garma agent video (2026-10-17) | [transcript](GarmaAgentVideo_10172026/garma_agent_video_transcript_10172026.md) · [comparative analysis](GarmaAgentVideo_10172026/garma_agent_video_comparative_analysis_10172027.md) · [reverse rug](GarmaAgentVideo_10172026/garma_agent_video_reverse_rug_10172026.md) |
 
 ## Skylit surface
 
