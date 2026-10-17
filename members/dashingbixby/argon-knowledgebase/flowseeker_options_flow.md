@@ -186,4 +186,15 @@ When chart structure + Heatseeker point one way (e.g., SPY rejecting twice at it
    - **Check C (Expiry Horizon):** Is it 0–2 DTE right at the ceiling (breakout bet or short cover) vs. 90 DTE (protection)? `[DOCTRINE: Academy Flowseeker Ch. 9, Sec. 4 & 5]`[cite: 1].
    - **Check D (Price Acceptance vs. Rejection):** Does price cleanly reject `590` while the call flow fades (supports short at reduced size), OR does price accept above `590`? `[DOCTRINE: Academy Flowseeker Ch. 9, Sec. 4 & 5, Quiz Q21 & Q22]`[cite: 1].
    - **Check E (Map Reshuffle):** Does the `590` ceiling node hold firm, or does it shrink/unwind (supports breakout)? `[DOCTRINE: Academy Flowseeker Ch. 9, Sec. 4 & 5, Quiz Q22]`[cite: 1].
-   - **Check F (Next-Day Open Interest):** Tomorrow morning, does OI drop (consistent with Explanation 3: closing) or rise (consistent with Explanations 1 or
+   - **Check F (Next-Day Open Interest):** Tomorrow morning, does OI drop (consistent with Explanation 3: closing) or rise (consistent with Explanations 1 or 2)? `[DOCTRINE: Academy Flowseeker Ch. 9, Sec. 4 & 5, Quiz Q17 & Q23]`[cite: 1].
+4. **Step 4 — Enforce the Conflict Action Rule Today:**
+   - Until Checks A–E separate the explanations today, the state is **`CONFLICT`**. The agent must **wait for clean price rejection/acceptance, reduce size, or pass (`NO_TRADE`)**—never trade full size into an active conflict `[DOCTRINE: Academy Flowseeker Ch. 9, Sec. 4 & 5, Quiz Q18–Q20, Q23, Q24]`[cite: 1].
+
+---
+
+## Agent Checklist (`flowseeker_options_flow.md`)
+
+1. **Enforce `CANCELLED` Filter & Spot-at-Execution Anchor:** Strip voided prints and compute moneyness against $S_{\text{exec}}$[cite: 1].
+2. **Scan $\pm 2\text{s}$ Window for Multi-Leg Packages:** Group same-contract $\le 1\text{s}$ prints as Sweeps and pair simultaneous multi-strike/multi-type prints on the same ticker into Spreads/Straddles before scoring direction[cite: 1].
+3. **Keep Summary Bar Scope Separate from Tab Scope:** Never attribute market-wide Summary Bar metrics to a filtered single-ticker tab[cite: 1].
+4. **Trigger Conflict Protocol on Price-Flow Mismatch:** When flow at a key node opposes the chart+map thesis, instantiate all 5 explanations and block full-size entries until price acceptance/rejection and node stability resolve the conflict[cite: 1].

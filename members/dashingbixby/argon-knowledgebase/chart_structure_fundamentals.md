@@ -114,7 +114,7 @@ This file supplies the exact mathematical and procedural definitions so an agent
 - **Precise version:** Given the last two confirmed Major Swing Highs ($SH_{n-1}, SH_n$) and last two confirmed Major Swing Lows ($SL_{n-1}, SL_n$) on timeframe $TF$:
   - **Uptrend (`TREND_UP`):** $SH_n > SH_{n-1} + \epsilon_{\text{zone}}$ AND $SL_n > SL_{n-1} + \epsilon_{\text{zone}}$ (`Higher Highs + Higher Lows`) `[DOCTRINE: Academy Ch. 1, Sec. 2]`[cite: 1].
   - **Downtrend (`TREND_DOWN`):** $SH_n < SH_{n-1} - \epsilon_{\text{zone}}$ AND $SL_n < SL_{n-1} - \epsilon_{\text{zone}}$ (`Lower Highs + Lower Lows`) `[DOCTRINE: Academy Ch. 1, Sec. 2]`[cite: 1].
-  - **Range-Bound (`RANGE`):** Swing highs stall near a common ceiling ($|SH_n - SH_{n-1}| \le \epsilon_{\text{zone}}$) and/or price oscillates inside a bounded horizontal channel $[R_{\text{low}}, R_{\text{high}}]$ without establishing progressive higher/lower swings `[DOCTRINE: Academy Ch. 1, Sec. 4 & 5]`[cite: 1].
+  - **Range-Bound (`RANGE`):** Swing highs stall near a common ceiling ($\vert{}SH_n - SH_{n-1}\vert{} \le \epsilon_{\text{zone}}$) and/or price oscillates inside a bounded horizontal channel $[R_{\text{low}}, R_{\text{high}}]$ without establishing progressive higher/lower swings `[DOCTRINE: Academy Ch. 1, Sec. 4 & 5]`[cite: 1].
 
 ### 3.2 Inputs
 - Ordered sequence of confirmed Major Swing Highs and Swing Lows on timeframe $TF$.
@@ -132,4 +132,127 @@ When market structure is in a `RANGE` (or bounded between two structural levels 
 3. **Classify Price Location Zone:**
    - Skylit states: *"A range consists of three primary zones: 1. Range High, 2. Range Low, 3. Midpoint. Range highs and lows represent extremes. The midpoint represents equilibrium... We trade extremes. We avoid midpoints."* `[DOCTRINE: Academy Ch. 1, Sec. 4]`[cite: 1].
    - Because Skylit requires a **minimum 3:1 Reward-to-Risk** to the opposite side of the range `[DOCTRINE: Academy Ch. 3, Sec. 6; Ch. 6, Sec. 9]`[cite: 1], mathematically price must be within the outer **25%** of the range (or within the node Deflection Zone of $R_{\text{low}}$ / $R_{\text{high}}$) to achieve $\ge 3:1$ R:R across the range `[INFERENCE]`:
-     - **`AT
+     - **`AT_RANGE_LOW` (Bullish Extreme):** $P_{\text{spot}} \in [R_{\text{low}} - \delta_{\text{deflect}}, R_{\text{low}} + \max(\delta_{\text{deflect}}, 0.20 \times W)]$.
+     - **`AT_RANGE_HIGH` (Bearish Extreme):** $P_{\text{spot}} \in [R_{\text{high}} - \max(\delta_{\text{deflect}}, 0.20 \times W), R_{\text{high}} + \delta_{\text{deflect}}]$.
+     - **`AT_MIDPOINT` (No-Trade Equilibrium Zone):** $L_{\%} \in (0.25, 0.75)$ and not touching an intermediate structural node `[INFERENCE]`.
+
+### 3.4 Edge Cases
+- **Momentum Inside a Range Midpoint:** If price is moving rapidly (large candles) through $R_{\text{mid}}$, Skylit explicitly warns: *"Mistake 3 — Confusing Momentum With Structure. Just because price is moving quickly does not mean a trade exists. Structure determines opportunity, not speed."* `[DOCTRINE: Academy Ch. 1, Sec. 5]`[cite: 1].
+
+### 3.5 Worked Example (`[DOCTRINE: Academy Ch. 1, Sec. 5 Case Study]`)
+- **Inputs:** SPX has a clearly defined range `[DOCTRINE: Academy Ch. 1, Sec. 5]`[cite: 1]:
+  - $\text{Range High } (R_{\text{high}}) = 6795$
+  - $\text{Midpoint } (R_{\text{mid}}) = 6782$ *(note: mathematical center of 6795 and 6770 is 6782.5; Skylit rounds to 6782)*[cite: 1]
+  - $\text{Range Low } (R_{\text{low}}) = 6770$
+- **Event:** Price moves downward toward `6770` (e.g., spot = `6771`, $L_{\%} = (6771 - 6770)/25 = 4\%$).
+- **Classification:** `AT_RANGE_LOW`. The agent forms the structural hypothesis: *"Price may react at this level — range low on SPX"* and now queries Heatseeker to confirm `[DOCTRINE: Academy Ch. 1, Sec. 5]`[cite: 1].
+
+### 3.6 What It Is NOT
+- A trend is **not** a single fast 5-minute candle; a range extreme is **not** any arbitrary price where a large options print appeared `[DOCTRINE: Academy Ch. 1, Sec. 5; Flowseeker Ch. 1, Sec. 3]`[cite: 1].
+
+### 3.7 Related Concepts
+- See `no_trade_conditions.md` (Gate 1: Midpoint Prohibition) and `entries_stops_targets_and_rr.md`.
+
+---
+
+## 4. Support & Resistance (S/R) Zones, Level Grading & Exceptions
+
+### 4.1 Definition
+- **Plain sentence:** **Support** is a price zone ("floor" / area of memory) where buyers previously stepped in and pushed price higher; **Resistance** is a price zone ("ceiling" / area of memory) where sellers previously stepped in and pushed price lower `[DOCTRINE: Academy Ch. 1, Sec. 4]`[cite: 1].
+- **Precise version:** A SupportZone or ResistanceZone $Z$ is a price interval $[P_Z - \epsilon_Z, P_Z + \epsilon_Z]$ anchored at a confirmed Major Swing Low (Support) or Major Swing High (Resistance), or a Prior Day High/Low/Close (`PDH`, `PDL`, `PDC`) or gap boundary, characterized by 5 grading attributes `[DOCTRINE: Academy Ch. 1, Sec. 4; Ch. 10, Sec. 6]`[cite: 1].
+
+### 4.2 Inputs
+- Confirmed Swing Highs/Lows across `1D`, `1H`, and `5m` timeframes.
+- Historical bar series since the swing point was formed (to count subsequent tests/taps).
+- Current timestamp $t_{\text{now}}$.
+
+### 4.3 Procedure: Grading a Level's Strength
+Skylit defines five criteria that make a chart level "Good" (Strong) vs. "Weak" `[DOCTRINE: Academy Ch. 1, Sec. 4]`[cite: 1]. An agent scores each candidate level $Z$ across these five dimensions:
+
+1. **Freshness (Touch Count $N_{\text{touches}}$ Since Creation):**
+   - *"A level that has not been tapped yet is stronger than one that has been tested multiple times. Each time price touches a level, it degrades — the reaction becomes weaker because the orders sitting there get absorbed. Fresh levels carry the most potential energy."* `[DOCTRINE: Academy Ch. 1, Sec. 4.2]`[cite: 1].
+   - Count how many distinct times price returned to $[P_Z - \epsilon_Z, P_Z + \epsilon_Z]$ after the swing point was confirmed:
+     - $N_{\text{touches}} = 0 \implies$ **Fresh** (Highest grade) `[DOCTRINE: Academy Ch. 1, Sec. 4.2]`[cite: 1].
+     - $N_{\text{touches}} = 1 \implies$ **Second Tap / Double Bottom or Top Candidate** (Playable exception; see 4.4) `[DOCTRINE: Academy Ch. 1, Sec. 4.2]`[cite: 1].
+     - $N_{\text{touches}} \ge 2 \implies$ **Degraded / Weak** (Avoid fading) `[DOCTRINE: Academy Ch. 1, Sec. 4.2; Ch. 6, Sec. 6]`[cite: 1].
+2. **Magnitude of the Original Reversal ($\Delta_{\text{rev}}$):**
+   - *"Levels created by large, dramatic reversals carry more weight than those formed by shallow ones"* `[DOCTRINE: Academy Ch. 1, Sec. 4]`[cite: 1].
+3. **Clean Price Action / Sharpness of Reversal ($v_{\text{rev}}$):**
+   - *"Sharp reversals carry more weight than slow, grinding reactions"* vs. *"Choppy, unclear reactions around it"* `[DOCTRINE: Academy Ch. 1, Sec. 4]`[cite: 1].
+4. **Multiple Timeframe Alignment (`MTF_Align`):**
+   - *"The level shows up on more than one timeframe"* (e.g., visible on both `1D`/`1H` and `5m`, vs. *"Only visible on a very low timeframe"*) `[DOCTRINE: Academy Ch. 1, Sec. 4]`[cite: 1].
+5. **Recency ($\Delta t = t_{\text{now}} - t_{\text{created}}$):**
+   - *"A support level from last week is more relevant than one from six months ago."* `[DOCTRINE: Academy Ch. 1, Sec. 4.4]`[cite: 1]. Weight recent swing points ($\le 5\text{--}20$ trading days) above levels $\ge 180$ days old `[INFERENCE]`.
+
+### 4.4 The Two Doctrine Exceptions to Degraded Levels
+Skylit explicitly defines two exceptions where a previously touched level remains strong `[DOCTRINE: Academy Ch. 1, Sec. 4.2]`[cite: 1]:
+1. **Exception 1 — Double Bottoms (and Double Tops):**
+   - *"Double bottoms — a second tap at the same low can produce a strong reversal. This is the one scenario where a re-test is worth playing."* `[DOCTRINE: Academy Ch. 1, Sec. 4.2; Ch. 1, Sec. 5 NQ hourly double bottom; Ch. 10, Sec. 12 SPX double bottom]`[cite: 1].
+   - **Rule:** When $N_{\text{touches}} == 1$ at a major support low (the 2nd overall touch of that price), flag as `DOUBLE_BOTTOM_CANDIDATE` (valid bullish thesis) `[DOCTRINE: Academy Ch. 1, Sec. 4.2]`[cite: 1].
+2. **Exception 2 — S/R Flips (Support-Becomes-Resistance / Resistance-Becomes-Support):**
+   - *"S/R flips — when a former resistance level becomes support (or vice versa), the level takes on new meaning. It's essentially fresh in its new role."* `[DOCTRINE: Academy Ch. 1, Sec. 4.2]`[cite: 1].
+   - **Rule:** If price breaks decisively through a ResistanceZone $Z$ and closes beyond it by $> \epsilon_Z$, convert $Z$ into a SupportZone and **reset its touch counter in its new role to $N_{\text{touches\_new\_role}} = 0$ (Fresh)** `[DOCTRINE: Academy Ch. 1, Sec. 4.2]`[cite: 1]. (Example in `SRC-12`: Previous Day Low `PDL` on SPX at `6775` acting as overhead resistance after a breakdown `[DOCTRINE: Academy Ch. 10, Sec. 6]`[cite: 1].)
+
+### 4.5 Edge Cases
+- **Spider-Web Charts (Too Many Lines):** If the detector identifies $> 5$ S/R zones within the day's Expected Move, keep only the top 3–5 highest-graded zones (prioritizing `1D`/`1H`, Fresh, and `PDH`/`PDL`/Gap levels) `[DOCTRINE: Academy Ch. 1, Sec. 4: "New traders tend to draw too many lines... Stick to the obvious levels"]`[cite: 1].
+
+### 4.6 Worked Example (`[DOCTRINE: Academy Ch. 10, Sec. 6 & 12]`)
+- **Case A (S/R Flip):** SPX broke below Previous Day Low (`6775`). When SPX rallies back up to `6775` from below, `6775` acts as a fresh **S/R Flip Resistance** level `[DOCTRINE: Academy Ch. 10, Sec. 6]`[cite: 1].
+- **Case B (Double Bottom):** SPX drops to `6775`, bounces, and later returns to `6775` for a second touch, forming a **Double Bottom** on support $\rightarrow$ valid bullish thesis when paired with an SPX Reverse Rug at `6775` `[DOCTRINE: Academy Ch. 10, Sec. 12]`[cite: 1].
+
+### 4.7 What It Is NOT
+- Support/Resistance is **not** an exact penny line; it is a **price zone** ("not a guarantee, but an area where demand/supply has shown up before") `[DOCTRINE: Academy Ch. 1, Sec. 4]`[cite: 1].
+
+### 4.8 Related Concepts
+- Combines directly with **Heatseeker Floors, Ceilings, and King Nodes** (`heatseeker_node_core_attributes.md`).
+
+---
+
+## 5. Liquidity Sweeps, Initial Balance (IB) & Killzones
+
+### 5.1 Definitions
+1. **Mapped Liquidity Sweep (Summer Bootcamp 4th Gate):**
+   - **Plain sentence:** Price briefly pokes below a prior swing low (or above a prior swing high) to trigger resting stop-loss orders and then closes back inside the range `[DOCTRINE: Academy Flowseeker Ch. 8, Sec. 5 & Ch. 10, Sec. 2; GENERAL TA]`[cite: 1].
+   - **Precise version:** In Flowseeker Ch. 10, Skylit notes that the stricter Summer Bootcamp checklist adds a fourth gate to the A+ setup: *"a mapped liquidity sweep — all four gates, or no trade"* `[DOCTRINE: Academy Flowseeker Ch. 10, Sec. 2]`[cite: 1]. In Flowseeker Ch. 8's case study, this is illustrated on a 5-minute Atlas chart as: *"price sells off into 578 [range low / floor] and wicks below it, then closes back above."* `[DOCTRINE: Academy Flowseeker Ch. 8, Sec. 5]`[cite: 1].
+   - **Detector Rule:** At a support/floor level $P_{\text{floor}}$, candle $C_i$ (or a 2–3 bar sequence) has $L_i < P_{\text{floor}}$ (sweeping below the level/prior low) followed by a candle close $C_i \ge P_{\text{floor}}$ `[INFERENCE from Flowseeker Ch. 8, Sec. 5]`[cite: 1].
+2. **Initial Balance (`IB` Indicator on Atlas):**
+   - **Plain sentence:** The high-to-low price range established during the first 15, 30, or 60 minutes of a major trading session (New York, London, or Asia) `[DOCTRINE: Changelog Oct 13, 2026]`.
+   - **Precise version:** For session $S \in \{\text{NY}, \text{London}, \text{Asia}\}$ and duration $D \in \{15\text{m}, 30\text{m}, 60\text{m}\}$:
+     - $\text{IB High} = \max(H)$ over $[t_{\text{session\_open}}, t_{\text{session\_open}} + D)$ `[DOCTRINE: Changelog Oct 13, 2026]`.
+     - $\text{IB Low} = \min(L)$ over $[t_{\text{session\_open}}, t_{\text{session\_open}} + D)$ `[DOCTRINE: Changelog Oct 13, 2026]`.
+     - $\text{IB Midpoint} = (\text{IB High} + \text{IB Low}) / 2$ `[DOCTRINE: Changelog Oct 13, 2026]`.
+     - Also draws Fibonacci retracement lines ("shaded golden zone", typically $50\%\text{--}61.8\%$ `[GENERAL TA]`, exact ratios `[NOT SPECIFIED]` in changelog) and an optional extension ladder `[DOCTRINE: Changelog Oct 13, 2026]`.
+3. **Killzones (`Killzones` Indicator on Atlas):**
+   - **Plain sentence:** Time-boxed intraday windows (`ASIA`, `LNDN`, `NYAM`, `NYPM`) drawn on charts $\le 30\text{m}$ with horizontal lines marking each session's high and low `[DOCTRINE: Changelog Oct 13, 2026]`.
+
+### 5.2 Inputs
+- Intraday OHLCV bars (`1m`, `5m`, `15m`, `30m`).
+- Session open timestamps and user-selected IB duration (`15m`, `30m`, or `60m`).
+
+### 5.3 Procedure
+1. **Track Killzone Highs/Lows:** On any chart with timeframe $\le 30\text{m}$, track the running High and Low of `ASIA`, `LNDN`, `NYAM`, and `NYPM` windows `[DOCTRINE: Changelog Oct 13, 2026]`.
+2. **Lock Initial Balance:** At $t_{\text{open}} + D$ (e.g., `10:00 ET` for a 30m NY IB or `10:30 ET` for a 60m NY IB), lock $\text{IB High}$, $\text{IB Low}$, and $\text{IB Midpoint}$ for the rest of the session `[DOCTRINE: Changelog Oct 13, 2026]`.
+3. **Check Liquidity Sweep Gate (if Bootcamp 4-Gate Mode is enabled):** When price tests a major S/R + Node extreme, verify whether price wicked beyond the level/swing point and closed back inside `[DOCTRINE: Academy Flowseeker Ch. 8, Sec. 5; Ch. 10, Sec. 2]`[cite: 1].
+
+### 5.4 Edge Cases
+- **Timeframes $> 30\text{m}$:** The Atlas `Killzones` indicator only renders on `30m` charts and under (`1m`, `5m`, `15m`, `30m`) `[DOCTRINE: Changelog Oct 13, 2026]`.
+
+### 5.5 Worked Example (`[DOCTRINE: Academy Flowseeker Ch. 8, Sec. 5]`)
+- SPY is trading on a `5m` Atlas chart with a week-long range of `578` to `590` and a Heatseeker floor node at `578`.
+- Price sells off into `578`, wicks below `578` (e.g., low of `577.65`), and the 5-minute candle closes back above `578` (e.g., `578.20`) while a tall ask-side call bar prints in the Flow Pane `[DOCTRINE: Academy Flowseeker Ch. 8, Sec. 5]`[cite: 1].
+- Both the Charts First Floor Hold and the Bootcamp Liquidity Sweep gate are satisfied.
+
+### 5.6 What It Is NOT
+- A candle that breaks below `578` and **closes and holds** at `576.80` is **price acceptance below support** (invalidation), **not** a liquidity sweep `[DOCTRINE: Academy Flowseeker Ch. 7, Sec. 6; Ch. 8, Sec. 5]`[cite: 1].
+
+### 5.7 Related Concepts
+- See `session_timing.md` and `charts_first_workflow.md`.
+
+---
+
+## Agent Checklist (`chart_structure_fundamentals.md`)
+
+1. **Ingest Multi-Timeframe Bars:** Load `1D` (highways), `1H` (local roads, anchored at `09:30 ET` if RTH-only), and `5m` (side streets) `[DOCTRINE: Academy Ch. 1, Sec. 4.3; Changelog Oct 13, 2026]`[cite: 1].
+2. **Detect & Grade S/R Zones:** Extract confirmed Swing Highs/Lows, `PDH`/`PDL`, and Gap boundaries; score each by Freshness ($N_{\text{touches}} == 0$, or Double Bottom $N_{\text{touches}} == 1$, or S/R Flip reset), Reversal Magnitude, Sharpness, MTF Alignment, and Recency `[DOCTRINE: Academy Ch. 1, Sec. 4]`[cite: 1].
+3. **Classify Structure State:** Determine whether the active chart is `TREND_UP`, `TREND_DOWN`, or `RANGE` `[DOCTRINE: Academy Ch. 1, Sec. 2 & 5]`[cite: 1].
+4. **Evaluate Location Gate:** Compute whether current spot price is at a structural extreme (`AT_RANGE_LOW`, `AT_RANGE_HIGH`, or testing a fresh `1D`/`1H` S/R zone) vs. `AT_MIDPOINT`. If `AT_MIDPOINT`, halt and output `NO_TRADE_MIDPOINT` `[DOCTRINE: Academy Ch. 1, Sec. 4 & 5]`[cite: 1].
